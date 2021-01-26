@@ -1,0 +1,35 @@
+version: "3"
+services:
+  api:
+    build:
+      context: ./services/api/shoeroom-api
+      dockerfile: dev.Dockerfile
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+    - ./services/api/shoeroom-api/server:/app/server
+    - ./services/api/shoeroom-api/public:/app/public
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    container_name: shoeroom-api
+    command: "npm run watch:dev"
+  client:
+    build:
+      context: ./services/client/my-app
+      dockerfile: dev.Dockerfile
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./services/client/my-app/src:/app/src
+      - ./services/client/my-app/public:/app/public
+    ports:
+      - "80:3000"
+    container_name: shoeroom-client
+    command: "npm start"
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: shoeroom-db
