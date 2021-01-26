@@ -33,3 +33,12 @@ services:
     ports:
       - "27017:27017"
     container_name: shoeroom-db
+  db-admin:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "db"
+    container_name: shoeroom-db-admin
