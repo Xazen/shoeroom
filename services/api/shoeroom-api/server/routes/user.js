@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { check, validationResult } from "express-validator";
 import User from "../model/User";
 import jwt from "jsonwebtoken";
+import auth from "../middleware/auth";
 
 const router = express.Router();
 /**
@@ -122,7 +123,7 @@ router.post(
 
             jwt.sign(
               payload,
-              "secret",
+              "randomString",
                 {
                     expiresIn: 3600
                 },
@@ -140,5 +141,20 @@ router.post(
             });
         }
     });
+
+/**
+ * @method - GET
+ * @param - /me
+ * @description - Get logged in user
+ */
+router.get("/me", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        res.json(user);
+    } catch (e) {
+        console.log(e);
+        res.send({ message: "Error fetching user" });
+    }
+});
 
 export default router;
